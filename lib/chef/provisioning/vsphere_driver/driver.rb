@@ -168,7 +168,7 @@ module ChefProvisioningVsphere
 
       vm = find_or_create_vm(bootstrap_options, machine_spec, action_handler)
 
-      add_machine_spec_location(vm, machine_spec)
+      add_machine_spec_location(vm, machine_spec, bootstrap_options)
 
       action_handler.performed_action(machine_msg(
                                         machine_spec.name,
@@ -193,14 +193,14 @@ module ChefProvisioningVsphere
     #
     # @param [Object] machine_spec taken from Chef provisioning for all the `machine_spec`.
     # @param [Object] vm taken from Chef provisioning for all the vm state.
-    def add_machine_spec_location(vm, machine_spec)
+    def add_machine_spec_location(vm, machine_spec,bootstrap_options)
       machine_spec.location = {
         'driver_url' => driver_url,
         'driver_version' => VERSION,
         'server_id' => vm.config.instanceUuid,
         'is_windows' => is_windows?(vm),
         'allocated_at' => Time.now.utc.to_s,
-        'ipaddress' => vm.guest.ipAddress
+        'ipaddress' => bootstrap_options[:customization_spec][:ipsettings][:ip]
       }
     end
 
